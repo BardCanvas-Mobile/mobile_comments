@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language>
+    
+    <display_name>Mobile Comments</display_name>
+    <icon>fa-mobile</icon>
+    <description>
+        Extender for BardCanvas Mobile to deliver post comments.
+    </description>
+    
+    <report>Report</report>
+    
+</language>
