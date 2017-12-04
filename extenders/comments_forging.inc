@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Comments listing for single post for mobile platform.
  * It updates $post->extra_content_blocks array if comments are found.
@@ -29,17 +28,17 @@ use hng2_modules\mobile_controller\feed_item;
 use hng2_modules\mobile_controller\content_block;
 use hng2_modules\mobile_controller\feed_item_comment;
 use hng2_modules\posts\post_record;
-use hng2_tools\record_browser;
 
-global $post, $config, $settings, $item, $modules, $account;
+global $post, $config, $settings, $item, $modules, $account, $language;
 
-$browser         = new record_browser("");
 $repository      = new comments_repository();
 $comments_module = $modules["comments"];
 
+if( empty($config->globals["@mobile_comments:all_for_current_postsset"]) ) return;
+if( empty($config->globals["@mobile_comments:all_for_current_postsset"][$post->id_post]) ) return;
+
 /** @var comment_record[] $comments */
-list($find_params, $comments_count, $comments, $pagination) = $repository->get_for_single_post($post->id_post);
-if( $comments_count == 0 ) return;
+$comments = array_reverse($config->globals["@mobile_comments:all_for_current_postsset"][$post->id_post]);
 
 /** @var comment_record[] $parents */
 $parents = array();
@@ -160,7 +159,7 @@ foreach($comments as $comment)
     {
         $instance->extra_content_blocks[] = new content_block(array(
             "title"    => "",
-            "class"    => "extra_details color-gray",
+            "class"    => "framed_content extra_details color-gray",
             "contents" => implode("\n", $extra_details),
         ));
     }
@@ -177,14 +176,23 @@ foreach($comments as $comment)
             "caption"   => trim($comments_module->language->record_nav->actions->reply),
             "icon"      => "fa-reply",
             "class"     => "color-gray",
+            "params"    => array(
+                "parent_comment" => $comment->id_comment
+            ),
         ));
-        
-        # Quote
+    }
+    
+    if( $modules["contact"]->enabled && $account->id_account != $comment->id_author )
+    {
+        # Report
         $instance->action_triggers[] = new action_trigger(array(
-            "action_id" => "comments:quote",
-            "caption"   => trim($comments_module->language->record_nav->actions->quote),
-            "icon"      => "fa-quote-left",
-            "class"     => "color-gray",
+            "action_id" => "comments:report",
+            "caption"   => trim($this_module->language->report),
+            "icon"      => "fa-exclamation-circle",
+            "class"     => "color-pink",
+            "params"    => array(
+                "id" => $comment->id_comment
+            ),
         ));
     }
     
@@ -196,17 +204,9 @@ foreach($comments as $comment)
             "caption"   => trim($language->contact->pm->caption),
             "icon"      => "fa-inbox",
             "class"     => "color-gray",
-        ));
-    }
-    
-    if( $account->_exists && $account->state != 'disabled' && $account->level < $config::MODERATOR_USER_LEVEL )
-    {
-        # Report
-        $instance->action_triggers[] = new action_trigger(array(
-            "action_id" => "comments:report",
-            "caption"   => trim($this_module->language->report),
-            "icon"      => "fa-flag",
-            "class"     => "color-gray",
+            "params"    => array(
+                "target_id_account" => $comment->id_author
+            ),
         ));
     }
     
@@ -218,6 +218,9 @@ foreach($comments as $comment)
             "caption"   => trim($comments_module->language->record_nav->actions->edit),
             "icon"      => "fa-pencil-square-o",
             "class"     => "color-gray",
+            "params"    => array(
+                "id_comment" => $comment->id_comment
+            ),
         ));
         
         # Trash
@@ -226,9 +229,6 @@ foreach($comments as $comment)
             "caption"   => trim($comments_module->language->record_nav->actions->trash),
             "icon"      => "fa-trash",
             "class"     => "color-red",
-            "options"   => array(
-                "remove_on_success" => true,
-            ),
             "params"    => array(
                 "id_comment" => $comment->id_comment,
             ),
@@ -250,27 +250,27 @@ foreach($comments as $comment)
             "caption"   => trim($comments_module->language->record_nav->actions->reject),
             "icon"      => "fa-times",
             "class"     => "color-orange",
-            "options"   => array(
-                "remove_on_success" => true,
-            ),
             "params"    => array(
                 "id_comment" => $comment->id_comment,
             ),
         ));
         
         # Disable author account
-        $instance->action_triggers[] = new action_trigger(array(
-            "action_id" => "accounts:disable",
-            "caption"   => trim($comments_module->language->mobile->disable_account->caption),
-            "icon"      => "fa-user-times",
-            "class"     => "color-red",
-            "options"   => array(
-                "reload_feed_on_success" => true,
-            ),
-            "params"    => array(
-                "id_post" => $post->id_post,
-            ),
-        ));
+        if( $author->_exists )
+        {
+            $instance->action_triggers[] = new action_trigger(array(
+                "action_id" => "accounts:disable",
+                "caption"   => trim($this_module->language->disable_author),
+                "icon"      => "fa-user-times",
+                "class"     => "color-red",
+                "options"   => array(
+                    "remove_parent_on_success" => true,
+                ),
+                "params"    => array(
+                    "id_account" => $author->id_account,
+                ),
+            ));
+        }
     }
     
     $instance->has_actions = count($instance->action_triggers) > 0;

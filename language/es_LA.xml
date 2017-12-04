@@ -7,6 +7,23 @@
         Extensor de comentarios para entradas de la plataforma móvil de BardCanvas.
     </description>
     
-    <report>Report</report>
+    <report>Reportar</report>
+    
+    <disable_author>Desactivar autor</disable_author>
+    
+    <messages>
+        <prompts>
+            <trash><![CDATA[
+                El comentario se enviará a la papelera.
+                Si el autor está registrado, recibirá una notificación.<br><br>
+                ¿Deseas proceder?
+            ]]></trash>
+            <reject><![CDATA[
+                El comentario se removerá de la página.
+                Si el autor está registrado, recibirá una notificación.<br><br>
+                ¿Deseas proceder?
+            ]]></reject>
+        </prompts>
+    </messages>
     
 </language>

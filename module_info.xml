@@ -14,12 +14,13 @@
     <extends_to>
         <mobile_controller>
             <actions_registry>
-                <definitions>extenders/mobile_controller_actions_registry.inc</definitions>
+                <definitions>extenders/actions_registry_definitions.inc</definitions>
             </actions_registry>
         </mobile_controller>
         <mobile_posts>
             <json_posts_feed>
-                <comments_forging>extenders/mobile_post_comments.inc</comments_forging>
+                <before_loop_start>extenders/comments_preparation.inc</before_loop_start>
+                <comments_forging>extenders/comments_forging.inc</comments_forging>
             </json_posts_feed>
         </mobile_posts>
     </extends_to>

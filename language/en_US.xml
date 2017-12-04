@@ -9,4 +9,21 @@
     
     <report>Report</report>
     
+    <disable_author>Disable author</disable_author>
+    
+    <messages>
+        <prompts>
+            <trash><![CDATA[
+                The comment will be sent to the trash can.
+                If the author is a registered user, a notification will be sent to them.<br><br>
+                Do you want to proceed?
+            ]]></trash>
+            <reject><![CDATA[
+                The comment will be removed from the page.
+                If the author is a registered user, a notification will be sent to them.<br><br>
+                Do you want to proceed?
+            ]]></reject>
+        </prompts>
+    </messages>
+    
 </language>
