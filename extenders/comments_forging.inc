@@ -177,7 +177,8 @@ foreach($comments as $comment)
             "icon"      => "fa-reply",
             "class"     => "color-gray",
             "params"    => array(
-                "parent_comment" => $comment->id_comment
+                "id_post"        => $comment->id_post,
+                "parent_comment" => $comment->id_comment,
             ),
         ));
     }

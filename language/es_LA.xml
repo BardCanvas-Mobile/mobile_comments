@@ -26,4 +26,14 @@
         </prompts>
     </messages>
     
+    <remote_reply>
+        <title>Responder comentario</title>
+        <content>
+            <placeholder>Escribe tu respuesta aquí. Añade imágenes usando el control debajo.</placeholder>
+        </content>
+        <attachments>
+            <title>Anexar imágenes</title>
+        </attachments>
+    </remote_reply>
+    
 </language>

@@ -26,4 +26,14 @@
         </prompts>
     </messages>
     
+    <remote_reply>
+        <title>Reply to comment</title>
+        <content>
+            <placeholder>Write your answer here. Attach images using the control below.</placeholder>
+        </content>
+        <attachments>
+            <title>Attach images</title>
+        </attachments>
+    </remote_reply>
+    
 </language>
