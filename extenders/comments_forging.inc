@@ -22,7 +22,7 @@ use hng2_base\config;
 use hng2_base\module;
 use hng2_base\settings;
 use hng2_modules\comments\comment_record;
-use hng2_modules\comments\comments_repository;
+use hng2_modules\mobile_comments\comments_repository_extender;
 use hng2_modules\mobile_controller\action_trigger;
 use hng2_modules\mobile_controller\feed_item;
 use hng2_modules\mobile_controller\content_block;
@@ -31,14 +31,14 @@ use hng2_modules\posts\post_record;
 
 global $post, $config, $settings, $item, $modules, $account, $language;
 
-$repository      = new comments_repository();
+$repository      = new comments_repository_extender();
 $comments_module = $modules["comments"];
 
 if( empty($config->globals["@mobile_comments:all_for_current_postsset"]) ) return;
 if( empty($config->globals["@mobile_comments:all_for_current_postsset"][$post->id_post]) ) return;
 
 /** @var comment_record[] $comments */
-$comments = array_reverse($config->globals["@mobile_comments:all_for_current_postsset"][$post->id_post]);
+$comments = $config->globals["@mobile_comments:all_for_current_postsset"][$post->id_post];
 
 /** @var comment_record[] $parents */
 $parents = array();
@@ -72,7 +72,7 @@ $item->allow_new_comments = $allow_new_comments;
 $limit_for_index = $settings->get("modules:comments.items_per_index_entry");
 $item->comments_limit_for_index = empty($limit_for_index) ? 10 : $limit_for_index;
 
-$output = "";
+$comments = $repository->build_as_flattened_tree($comments);
 foreach($comments as $comment)
 {
     $instance = new feed_item_comment();
@@ -182,7 +182,7 @@ foreach($comments as $comment)
         ));
     }
     
-    if( $modules["contact"]->enabled && $account->id_account != $comment->id_author )
+    if( $modules["contact"]->enabled && $account->id_account != $comment->id_author && $account->level < $config::MODERATOR_USER_LEVEL )
     {
         # Report
         $instance->action_triggers[] = new action_trigger(array(
@@ -205,7 +205,8 @@ foreach($comments as $comment)
             "icon"      => "fa-inbox",
             "class"     => "color-gray",
             "params"    => array(
-                "target_id_account" => $comment->id_author
+                "target"      => $author->id_account,
+                "target_name" => convert_emojis($author->display_name),
             ),
         ));
     }

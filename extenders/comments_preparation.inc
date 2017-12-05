@@ -27,5 +27,5 @@ $post_ids = array();
 foreach($posts as $post) $post_ids[] = $post->id_post;
 
 $repository   = new comments_repository();
-$all_comments = $repository->get_for_multiple_posts($post_ids);
+$all_comments = $repository->get_for_multiple_posts($post_ids, 99);
 $config->globals["@mobile_comments:all_for_current_postsset"] =& $all_comments;
