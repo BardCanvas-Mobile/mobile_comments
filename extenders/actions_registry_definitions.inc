@@ -14,6 +14,43 @@ global $manifest, $modules;
 
 $comments_module = $modules["comments"];
 
+# Add
+$manifest->actionsRegistry["comments:add"] = new action(array(
+    "id"          => "comments:add",
+    "module_name" => $comments_module->name,
+    "script_url"  => "{$comments_module->get_url(true)}/scripts/add.php",
+    "call_method" => "posting_form_composer",
+    "options"     => (object) array(
+        "composer" => (object) array(
+            "title" => trim($this_module->language->remote_add->title),
+            "fields" => (object) array(
+                "attachments_type" => (object) array(
+                    "type"  => "hidden",
+                    "value" => "preforged",
+                ),
+                "raw_success_confirmation" => (object) array(
+                    "type"  => "hidden",
+                    "value" => "true",
+                ),
+                "id_post" => (object) array(
+                    "type" => "hidden",
+                ),
+                "parent_comment" => (object) array(
+                    "type" => "hidden",
+                ),
+                "content" => (object) array(
+                    "type"        => "textarea/tinymce",
+                    "placeholder" => trim($this_module->language->remote_reply->content->placeholder),
+                ),
+                "attachments" => (object) array(
+                    "type"        => "local_image_selector",
+                    "title"       => trim($this_module->language->remote_reply->attachments->title),
+                ),
+            )
+        )
+    ),
+));
+
 # Reply
 $manifest->actionsRegistry["comments:reply"] = new action(array(
     "id"          => "comments:reply",

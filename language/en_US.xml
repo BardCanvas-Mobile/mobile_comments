@@ -26,6 +26,10 @@
         </prompts>
     </messages>
     
+    <remote_add>
+        <title>Send a comment</title>
+    </remote_add>
+    
     <remote_reply>
         <title>Reply to comment</title>
         <content>

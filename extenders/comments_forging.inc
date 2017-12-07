@@ -34,6 +34,34 @@ global $post, $config, $settings, $item, $modules, $account, $language;
 $repository      = new comments_repository_extender();
 $comments_module = $modules["comments"];
 
+$allow_new_comments = $post->allow_comments == 1;
+if( $post->allow_comments == 1 && $post->status != "published" )
+{
+    $allow_new_comments = false;
+}
+elseif(
+    $settings->get("modules:comments.avoid_anonymous") == "true" &&
+    $account->level < config::NEWCOMER_USER_LEVEL
+) {
+    $allow_new_comments = false;
+}
+else
+{
+    $days = $settings->get("modules:comments.disable_new_after");
+    if( $post->allow_comments == 1 && ! empty($days) && ! empty($post->publishing_date) && $post->publishing_date != "0000-00-00 00:00:00" )
+    {
+        $boundary = date("Y-m-d H:i:s", strtotime("$post->publishing_date + $days days"));
+        if( date("Y-m-d H:i:s") > $boundary ) $allow_new_comments = false;
+    }
+}
+$item->allow_new_comments = $allow_new_comments;
+if( $allow_new_comments ) $item->add_comment_action = new action_trigger(array(
+    "action_id" => "comments:add",
+    "params"    => array(
+        "id_post"        => $post->id_post,
+    ),
+));
+
 if( empty($config->globals["@mobile_comments:all_for_current_postsset"]) ) return;
 if( empty($config->globals["@mobile_comments:all_for_current_postsset"][$post->id_post]) ) return;
 
@@ -47,28 +75,6 @@ foreach($comments as $comment) $parents[$comment->id_comment] = $comment;
 $max_level = $settings->get("modules:comments.max_indent_level");
 if( empty($max_level) ) $max_level = 5;
 
-$allow_new_comments = true;
-if( $post->status != "published" )
-{
-    $allow_new_comments = false;
-}
-elseif(
-    $settings->get("modules:comments.avoid_anonymous") == "true" &&
-    $account->level < config::NEWCOMER_USER_LEVEL
-) {
-    $allow_new_comments = false;
-}
-else
-{
-    $days = $settings->get("modules:comments.disable_new_after");
-    if( ! empty($days) && ! empty($post->publishing_date) && $post->publishing_date != "0000-00-00 00:00:00" )
-    {
-        $boundary = date("Y-m-d H:i:s", strtotime("$post->publishing_date + $days days"));
-        if( date("Y-m-d H:i:s") > $boundary ) $allow_new_comments = false;
-    }
-}
-
-$item->allow_new_comments = $allow_new_comments;
 $limit_for_index = $settings->get("modules:comments.items_per_index_entry");
 $item->comments_limit_for_index = empty($limit_for_index) ? 10 : $limit_for_index;
 
