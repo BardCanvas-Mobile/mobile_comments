@@ -11,6 +11,8 @@
     
     <disable_author>Desactivar autor</disable_author>
     
+    <editing_comment>Editando comentario</editing_comment>
+    
     <messages>
         <prompts>
             <trash><![CDATA[
@@ -24,6 +26,8 @@
                 ¿Deseas proceder?
             ]]></reject>
         </prompts>
+        <comment_id_not_provided>Disculpa, pero debes proveer el identificador del comentario.</comment_id_not_provided>
+        <comment_not_found>El comentario no existe en la base de datos. Es posible que haya sido eliminado.</comment_not_found>
     </messages>
     
     <remote_add>

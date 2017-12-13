@@ -213,12 +213,12 @@ foreach($comments as $comment)
             "class"     => "color-gray",
             "params"    => array(
                 "target"      => $author->id_account,
-                "target_name" => convert_emojis($author->display_name),
+                "target_name" => $author->display_name,
             ),
         ));
     }
     
-    if( $account->id_account == $author->id_account || $account->level >= $config::MODERATOR_USER_LEVEL )
+    if( is_comment_editable($comment) )
     {
         # Edit
         $instance->action_triggers[] = new action_trigger(array(
@@ -230,7 +230,10 @@ foreach($comments as $comment)
                 "id_comment" => $comment->id_comment
             ),
         ));
-        
+    }
+    
+    if( $comment->can_be_deleted() )
+    {
         # Trash
         $instance->action_triggers[] = new action_trigger(array(
             "action_id" => "comments:trash",

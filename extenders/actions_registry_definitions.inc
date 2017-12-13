@@ -102,9 +102,9 @@ if( $modules["contact"]->enabled )
 # Edit
 $manifest->actionsRegistry["comments:edit"] = new action(array(
     "id"          => "comments:edit",
-    "module_name" => $comments_module->name,
-    "script_url"  => "{$comments_module->get_url(true)}/scripts/save.php",
-    "call_method" => "post",
+    "module_name" => $this_module->name,
+    "script_url"  => "{$this_module->get_url(true)}/remote_edit.php",
+    "call_method" => "frame",
 ));
 
 # Trash

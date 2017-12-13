@@ -11,6 +11,8 @@
     
     <disable_author>Disable author</disable_author>
     
+    <editing_comment>Editing comment</editing_comment>
+    
     <messages>
         <prompts>
             <trash><![CDATA[
@@ -24,6 +26,8 @@
                 Do you want to proceed?
             ]]></reject>
         </prompts>
+        <comment_id_not_provided>Sorry, but you must provide the id of the comment.</comment_id_not_provided>
+        <comment_not_found>The comment wasn't found on the database. It should have been deleted.</comment_not_found>
     </messages>
     
     <remote_add>
