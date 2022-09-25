@@ -10,7 +10,7 @@
  * @var account  $account
  * 
  * $_GET|$_POST params
- * @param string "id_comment"
+ * @param int "id_comment"
  */
 
 use hng2_base\account;
@@ -26,6 +26,8 @@ header('Access-Control-Allow-Methods: GET, POST');
 $toolbox = new toolbox();
 $toolbox->output_type = "HTML";
 $toolbox->open_session();
+
+$_REQUEST["id_comment"] = $_REQUEST["id_comment"] + 0;
 
 if( empty($_REQUEST["id_comment"]) )
     die( trim($current_module->language->messages->comment_id_not_provided) );
